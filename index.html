@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="font.css" />
+    <link rel="stylesheet" href="output.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+     <!-- Link Swiper's CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    
+   <!-- Demo styles -->
+   <style>
+    .swiper {
+      width: 100%;
+      height: 100%;
+    }
+
+    .swiper-slide {
+      text-align: center;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: #1788ae;
+    }
+
+    .swiper-pagination-bullet {
+      background-color: #23b9eb;
+    }
+  </style>
+  <script src="./matter.js" defer></script>
+</head>
+<body class="bg-[#111] text-white font-['Nunito']">
+  <section class="flex flex-col justify-between h-screen relative">
+    <header
+      class="z-10 pointer-events-none flex items-center justify-between w-full px-4 mt-4 max-w-screen-xl mx-auto"
+    >
+      <div class="flex gap-4 pointer-events-auto">
+        <path
+          d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+        ></path>
+      </div>
+    </header>
+    <div class="absolute inset-0 hidden md:block" id="wrapper-canvas"></div>
+    
+    <!-- SVG Logo Centered -->
+    <svg
+      viewBox="0 0 406 368"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      class="pointer-events-none absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[300px] sm:w-[400px] md:w-[650px] z-0"
+    >
+      <!-- "M" Shape Outline -->
+      <path
+        d="M70 350 V50 L160 270 L200 150 L240 270 L330 50 V350"
+        stroke="#1F2667"
+        stroke-opacity="0.9"
+        stroke-width="10"
+      />
+      
+      <!-- "M" Shape with Gradient Stroke -->
+      <path
+        d="M70 349V50L162 249L203 130L244 249L336 50V349"
+        stroke="url(#paint0_linear)"
+        stroke-width="10"
+      />
+  
+      <!-- Gradient Definition -->
+      <defs>
+        <linearGradient
+          id="paint0_linear"
+          x1="205.549"
+          y1="20.0169"
+          x2="204.338"
+          y2="342.461"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stop-color="#1595B6" />
+          <stop offset="1" stop-color="#1595B6" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+    </svg>
+  
+    <!-- Main content wrapper - using flex to position items -->
+    <div class="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
+      <!-- Name in the middle -->
+      <h1 class="pointer-events-none text-4xl md:text-[64px] font-['Spartan'] text-center mb-8" id="name-heading">
+        Muhammed Anas Dadabhay
+      </h1>
+      
+      <!-- Software Engineer text and buttons container - NOW USING TRANSFORM FOR POSITIONING -->
+      <div class="w-full flex flex-col items-center pointer-events-auto transform translate-x-0">
+        <!-- Using a container with text-left and auto margins to align with name -->
+        <div class="w-full max-w-screen-xl mx-auto px-4">
+          <p class="pointer-events-none font-['Merriweather'] italic my-4 text-left">
+            Software Engineer
+          </p>
+          
+          <!-- Buttons side by side -->
+          <div class="flex gap-4">
+            <button
+              id="downloadResumeBtn"
+              class="bg-[#4595eb] py-2 px-5 rounded font-extrabold bg-gradient-to-l from-[#1595b6] to-[#1f2667e6] relative hover:scale-110 ease-in-out duration-100 group">
+              Download My Resume
+            </button>
+            
+            <button
+              id="aboutMeBtn" 
+              class="bg-[#4595eb] py-2 px-5 rounded font-extrabold bg-gradient-to-l from-[#1595b6] to-[#1f2667e6] relative hover:scale-110 ease-in-out duration-100 group">
+              About Me
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      /* Social Container */
+      .social-container {
+          position: absolute; /* Stays in first section */
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 100;
+      }
+    
+      /* Box with Glow */
+      .social-box {
+          display: flex;
+          flex-direction: column;
+          padding: 15px;
+          border-radius: 10px;
+          background: transparent;
+          box-shadow: 0 0 10px rgba(0, 0, 255, 0.8);
+          animation: glow 2s infinite linear;
+      }
+    
+      /* Glow Animation */
+      @keyframes glow {
+          0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.6); }
+          50% { box-shadow: 0 0 20px rgba(0, 0, 255, 1); }
+      }
+    
+      /* Social Icons */
+      .social-icons {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+      }
+    
+      .social-icons a svg {
+          width: 28px;
+          height: 28px;
+          fill: #b0b2c3;
+          transition: fill 0.3s ease;
+      }
+    
+      .social-icons a:hover svg {
+          fill: white;
+      }
+    </style>
+    
+    <!-- Social Media Icons with Glow Effect -->
+    <div class="social-container">
+      <div class="social-box">
+          <ul class="social-icons">
+              <li>
+                <a href="https://www.linkedin.com/in/muhammed-anas-dadabhay-b492842bb/" target="_blank">
+                  <svg class="w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="28" height="28">
+                      <path fill="#b0b2c3" d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 83.5 0 53.8a53.8 53.8 0 0 1 107.6 0c0 29.7-24.1 54.3-53.8 54.3zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z"/>
+                  </svg>
+              </a>
+          </li>
+          <li>
+              <a href="https://www.instagram.com/m.anas77_d/" target="_blank">
+                  <svg class="w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="28" height="28">
+                      <path fill="#b0b2c3" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/>
+                  </svg>
+              </a>
+          </li>
+          <li>
+              <a href="mailto:muhammedanasdadabhay@gmail.com" target="_blank">
+                  <svg class="w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="28" height="28">
+                      <path fill="#b0b2c3" d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/>
+                  </svg>
+              </a>
+          </li>
+          <li>
+              <a href="https://www.youtube.com/@ChromeDonutGaming" target="_blank">
+                  <svg class="w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="28" height="28">
+                      <path fill="#b0b2c3" d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z"/>
+                  </svg>
+              </a>
+          </li>
+          <li>
+              <a href="https://github.com/ChromeDonutGaming" target="_blank">
+                  <svg class="w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" width="28" height="28">
+                      <path fill="#b0b2c3" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+                  </svg>
+              </a>
+              </li>
+          </ul>
+      </div>
+    </div>
+    
+    
+    <!-- Latest Works Button at bottom center - using a different approach -->
+    <div class="fixed bottom-8 left-0 right-0 flex justify-center w-full z-20 pointer-events-auto">
+      <div class="flex flex-col items-center">
+        <button
+          id="latestWorksBtn" 
+          class="bg-[#4595eb] py-2 px-5 rounded font-extrabold bg-gradient-to-l from-[#1595b6] to-[#1f2667e6] relative hover:scale-110 ease-in-out duration-100 group mb-4"
+          onclick="document.querySelector('section:nth-of-type(2)').scrollIntoView({behavior: 'smooth'})"
+        >
+          Latest Works
+        </button>
+        
+        <!-- Down Arrow Indicator -->
+        <svg width="20" height="12" viewBox="0 0 20 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="animate-bounce">
+          <path d="M1 1L10 10L19 1" stroke="#1595B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Script for smooth scrolling -->
+  <script>
+    document.getElementById('latestWorksBtn').addEventListener('click', function() {
+      // Select the next section and scroll to it
+      const nextSection = this.closest('section').nextElementSibling;
+      if (nextSection) {
+        nextSection.scrollIntoView({behavior: 'smooth'});
+      }
+    });
+  </script>
+    <section class="max-w-screen-xl mx-auto px-4 relative pb-8 sm:pb-16">
+      <h2
+        class="text-3xl sm:text-[40px] bg-[#111] relative z-10 font-bold px-4 py-2 w-max mx-auto text-center text-[#1788ae] sm:border-b-2 border-[#1788ae]"
+      >
+        Latest Works
+      </h2>
+      <div
+        class="flex flex-col sm:flex-row gap-4 mt-8 sm:gap-[80px] items-center sm:mt-20 relative"
+      >
+        <div
+          class="h-[1px] left-1/4 right-1/2 bg-[#1788ae] absolute top-1/2 hidden sm:block"
+        ></div>
+        <div
+          class="w-4 h-4 rounded-full border-[3px] border-[#459bd5] absolute left-1/2 -translate-x-1/2 bg-[#111] z-10 hover:scale-110 ease-in-out duration-100 hidden sm:block"
+        ></div>
+        <a
+          href="https://www.richfield.ac.za/"
+          class="flex w-full relative justify-center sm:justify-start"
+        >
+          <div
+            class="flex flex-col items-center relative group sm:hover:scale-105 ease-in-out duration-200"
+          >
+            <img
+              class="max-w-[400px] w-full mr-auto relative z-10 drop-shadow-[0_0px_60px_rgba(59,130,246,0.6)]"
+              src="./assets/images/Untitled_design__3_-removebg-preview.png"
+              alt=""
+            />
+            <span
+              class="flex group-hover:-top-14 ease-jump duration-200 bg-[#459bd5] sm:absolute left-1/2 sm:-translate-x-1/2 top-5 px-2 py-1 text-sm sm:text-base mt-2 rounded w-max items-center gap-1 after:hidden sm:after:block after:w-4 after:h-4 after:bg-inherit after:absolute after:left-1/2 after:-translate-x-1/2 after:rotate-45 after:-bottom-2"
+              >Richfield
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-external-link"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                ></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </span>
+          </div>
+        </a>
+
+        <div class="w-full">
+          <h3 class="text-[#459bd5] font-bold text-2xl md:text-4xl">
+            BSC IT - Software Engineering
+          </h3>
+          <span class="text-[#459bd5] text-base md:text-lg"
+            >(Richfield Graduate Institute of Technology | 2022-2024)</span
+          >
+          <p class="text-justify text-sm md:text-base mt-2">
+             Through my studies, I gained a strong foundation
+             in software development, problem-solving, and system architecture. 
+             My degree sharpened my technical skills and enhanced my ability
+              to adapt to emerging technologies in a rapidly evolving field.
+          </p>
+
+          <ul class="flex flex-wrap gap-2 mt-2">
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Java
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #C#
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Android Studio
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #PHP
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #MySQL
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #C++
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Visual Basic
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #HTML
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Cybersecurity
+            </li>
+            <li
+            class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+          >
+            #Machine Learning
+          </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="flex flex-col sm:flex-row gap-4 mt-12 sm:gap-[80px] items-center sm:mt-20 relative"
+      >
+        <div class="order-2 sm:order-1 w-full">
+          <h3 class="text-[#ffe578] font-bold text-2xl md:text-4xl">
+            CCNAv7
+          </h3>
+          <span class="text-[#ffe578] text-base md:text-lg"
+            >(Cisco | 2021)</span
+          >
+          <p class="text-justify text-sm md:text-base mt-2">
+            Being a lead developer, revamped the site to a highly responsive,
+            and interactive website. Created new features and pages. Worked as a
+            team with product manager and ux designer.
+          </p>
+
+          <ul class="flex flex-wrap gap-2 mt-2">
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Cisco
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #CCNAv7
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Networking
+            </li>
+           
+          </ul>
+        </div>
+        <div
+          class="h-[1px] left-1/2 right-1/4 bg-[#1788ae] absolute top-1/2 hidden sm:block"
+        ></div>
+        <div
+          class="w-4 h-4 rounded-full border-[3px] border-[#ffe578] absolute left-1/2 -translate-x-1/2 bg-[#111] z-10 hover:scale-110 ease-in-out duration-100 hidden sm:block"
+        ></div>
+        <a
+          href="https://www.credly.com/badges/48ea6cc4-14bc-4a53-8bdc-a96ae5aa9677/public_url"
+          class="order-1 sm:order-2 flex w-full relative justify-center sm:justify-start"
+        >
+          <div
+            class="flex flex-col items-center relative group sm:hover:scale-105 ease-in-out duration-200 sm:ml-auto"
+          >
+            <img
+              class="max-w-[400px] w-full relative z-10 drop-shadow-[0_0px_60px_rgba(59,130,246,0.6)]"
+              src="./assets/images/Untitled_design__2_-removebg.png"
+              alt=""
+            />
+            <span
+              class="flex group-hover:-top-14 ease-jump duration-200 text-black bg-[#ffe578] sm:absolute left-1/2 sm:-translate-x-1/2 top-5 px-2 py-1 text-sm sm:text-base mt-2 rounded w-max items-center gap-1 after:hidden sm:after:block after:w-4 after:h-4 after:bg-inherit after:absolute after:left-1/2 after:-translate-x-1/2 after:rotate-45 after:-bottom-2"
+              >CCNA
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-external-link"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                ></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </span>
+          </div>
+        </a>
+      </div>
+      <div
+        class="flex flex-col sm:flex-row gap-4 mt-12 sm:gap-[80px] items-center sm:mt-20 relative"
+      >
+        <div
+          class="h-[1px] left-1/4 right-1/2 bg-[#1788ae] absolute top-1/2 hidden sm:block"
+        ></div>
+        <div
+          class="w-4 h-4 rounded-full border-[3px] border-[#fc815c] absolute left-1/2 -translate-x-1/2 bg-[#111] z-10 hover:scale-110 ease-in-out duration-100 hidden sm:block"
+        ></div>
+        <a
+          href="https://andtc.com/"
+          class="flex w-full relative justify-center sm:justify-start"
+        >
+          <div
+            class="flex flex-col items-center relative group hover:scale-105 ease-in-out sm:mr-auto duration-200"
+          >
+            <img
+              class="max-w-[400px] w-full mr-auto relative z-10 drop-shadow-[0_0px_60px_rgba(59,130,246,0.6)]"
+              src="./assets/images/Untitled_design__5_-removebg-preview.png"
+              alt=""
+            />
+            <span
+              class="flex group-hover:-top-14 ease-jump duration-200 bg-[#fc815c] sm:absolute left-1/2 sm:-translate-x-1/2 top-5 px-2 py-1 text-sm sm:text-base mt-2 rounded w-max items-center gap-1 after:hidden sm:after:block after:w-4 after:h-4 after:bg-inherit after:absolute after:left-1/2 after:-translate-x-1/2 after:rotate-45 after:-bottom-2"
+              >ANDTC
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-external-link"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                ></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </span>
+          </div>
+        </a>
+
+        <div class="w-full">
+          <h3 class="text-[#fc815c] font-bold text-2xl md:text-4xl">
+            Software Engineering Intern
+          </h3>
+          <span class="text-[#fc815c] text-base md:text-lg"
+            >(ANDTC | 2024-2025)</span
+          >
+          <p class="text-justify text-sm md:text-base mt-2">
+            During my internship at ANDTC, I was responsible for building
+             a custom software solution from scratch. This involved gathering 
+             requirements, designing the architecture, and developing the 
+             entire system independently. I also utilized my networking and 
+             IT support skills, which enhanced my problem-solving abilities and
+              deepened my understanding of full-cycle software development.
+          </p>
+
+          <ul class="flex flex-wrap gap-2 mt-2">
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Software Engineer
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #SDLC
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #IT Support
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Networks
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Software Development
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #ANDTC
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Internship
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="flex flex-col sm:flex-row gap-4 mt-12 sm:gap-[80px] items-center sm:mt-20 relative"
+      >
+        <div class="order-2 sm:order-1 w-full">
+          <h3 class="text-[#47afa1] font-bold text-2xl md:text-4xl">
+            Career Guidance Website
+          </h3>
+          <span class="text-[#47afa1] text-base md:text-lg"
+            >(Final Year Group Project)</span
+          >
+          <p class="text-justify text-sm md:text-base mt-2">
+            For my final year project, our team developed a Career Guidance website
+             using Agile SDLC. It used algorithms and student results to assist
+              matrics in choosing a university course. My role focused on MySQL
+               database tasks and front-end development with HTML/CSS.
+          </p>
+
+          <ul class="flex flex-wrap gap-2 mt-2">
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #MySQL
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Python
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #HTML
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #CSS
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #PHP
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Agile
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #SDLC
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Project
+            </li>
+          </ul>
+        </div>
+        <div
+          class="h-[1px] left-1/2 right-1/4 bg-[#1788ae] absolute top-1/2 hidden sm:block"
+        ></div>
+        <div
+          class="w-4 h-4 rounded-full border-[3px] border-[#47afa1] absolute left-1/2 -translate-x-1/2 bg-[#111] z-10 hover:scale-110 ease-in-out duration-100 hidden sm:block"
+        ></div>
+        <a
+          href="#"
+          class="order-1 sm:order-2 flex w-full relative justify-center sm:justify-start"
+        >
+          <div
+            class="flex flex-col items-center relative group sm:hover:scale-105 ease-in-out duration-200 sm:ml-auto"
+          >
+            <img
+              class="max-w-[400px] w-full relative z-10 drop-shadow-[0_0px_60px_rgba(59,130,246,0.6)]"
+              src=".\assets\images\Untitled_design6-removebg-preview.png"
+              alt=""
+            />
+            <span
+              class="flex group-hover:-top-14 ease-jump duration-200 bg-[#47afa1] sm:absolute left-1/2 sm:-translate-x-1/2 top-5 px-2 py-1 text-sm sm:text-base mt-2 rounded w-max items-center gap-1 after:hidden sm:after:block after:w-4 after:h-4 after:bg-inherit after:absolute after:left-1/2 after:-translate-x-1/2 after:rotate-45 after:-bottom-2"
+              >Career Guidance
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-external-link"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                ></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </span>
+          </div>
+        </a>
+      </div>
+      <div
+        class="flex flex-col sm:flex-row gap-4 mt-12 sm:gap-[80px] items-center sm:mt-20 relative"
+      >
+        <div
+          class="h-[1px] left-1/4 right-1/2 bg-[#1788ae] absolute top-1/2 hidden sm:block"
+        ></div>
+        <div
+          class="w-4 h-4 rounded-full border-[3px] border-[#fc815c] absolute left-1/2 -translate-x-1/2 bg-[#111] z-10 hover:scale-110 ease-in-out duration-100 hidden sm:block"
+        ></div>
+        <a
+          href="https://www.credly.com/badges/8e061647-6dd8-498f-8b04-9716182c6380/public_url"
+          class="flex w-full relative justify-center sm:justify-start"
+        >
+          <div
+            class="flex flex-col items-center relative group hover:scale-105 ease-in-out sm:mr-auto duration-200"
+          >
+            <img
+              class="max-w-[400px] w-full mr-auto relative z-10 drop-shadow-[0_0px_60px_rgba(59,130,246,0.6)]"
+              src="./assets/images/pioneer-digital.webp"
+              alt=""
+            />
+            <span
+              class="flex group-hover:-top-14 ease-jump duration-200 bg-[#fc815c] sm:absolute left-1/2 sm:-translate-x-1/2 top-5 px-2 py-1 text-sm sm:text-base mt-2 rounded w-max items-center gap-1 after:hidden sm:after:block after:w-4 after:h-4 after:bg-inherit after:absolute after:left-1/2 after:-translate-x-1/2 after:rotate-45 after:-bottom-2"
+              >Cisco Cybersecurity
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-external-link"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                ></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </span>
+          </div>
+        </a>
+
+        <div class="w-full">
+          <h3 class="text-[#fc815c] font-bold text-2xl md:text-4xl">
+            Introduction to Cybersecurity
+          </h3>
+          <span class="text-[#fc815c] text-base md:text-lg"
+            >(Cisco)</span
+          >
+          <p class="text-justify text-sm md:text-base mt-2">
+            I completed Cisco's Introduction to Cybersecurity course,
+            gaining foundational knowledge of cyber threats,
+            vulnerabilities, and defense. I also explored 
+            cybersecurity's industry impact and career opportunities.
+          </p>
+
+          <ul class="flex flex-wrap gap-2 mt-2">
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Cybersecurity
+            </li>
+            <li
+              class="border rounded-[50px] border-[#999] px-[10px] py-[5px] text-sm md:text-base"
+            >
+              #Cisco
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="w-[2px] hidden sm:block bg-[#1788ae] absolute top-0 bottom-0 left-1/2 -translate-x-1/2"
+      ></div>
+    </section>
+    <section class="max-w-screen-xl mx-auto pb-12">
+      <h2
+        class="text-3xl sm:text-[40px] bg-[#111] sm:w-max relative z-10 font-bold px-4 py-2 mx-auto text-center text-[#1788ae] sm:border-2 border-[#1788ae] rounded-md"
+      >
+        What my clients are saying?
+      </h2>
+      <div class="swiper mySwiper !py-14">
+        <div class="swiper-wrapper items-center">
+          <div class="swiper-slide px-4">
+            <div
+              class="flex flex-col md:flex-row w-full md:max-w-[800px] items-center rounded-lg p-9 shadow-[0_0px_50px_rgba(59,130,246,0.6)] cursor-grab"
+            >
+              <img
+                class="shrink-0 w-[120px] h-[120px] md:w-[180px] md:h-[180px] rounded-full drop-shadow-[0_0px_80px_rgba(59,130,246,1)]"
+                src="/assets/images/"
+                alt="Testimonial 1"
+              />
+              <div
+                class="testimonial-text ml-6 text-left pt-6 md:pt-16 relative"
+              >
+                <p class="text-sm md:text-base mb-2">
+                  "Mr Dadabhay is an exceptional and exemplary worker. Over the course of his time with us
+                  he has always been willing to assist wherever posible and did so with a smile."
+                </p>
+                <h2
+                  class="text-right text-[#459bd5] font-bold text-2xl md:text-4xl"
+                >
+                  A.Mahomed
+                </h2>
+                <h5 class="text-right text-[#459bd5] text-base md:text-lg">
+                  Director, ANDTC
+                </h5>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide px-4">
+            <div
+              class="flex flex-col md:flex-row max-w-[800px] items-center rounded-lg p-9 shadow-[0_0px_50px_rgba(59,130,246,0.6)] cursor-grab"
+            >
+              <img
+                class="shrink-0 w-[120px] h-[120px] md:w-[180px] md:h-[180px] rounded-full drop-shadow-[0_0px_80px_rgba(59,130,246,1)]"
+                src="/assets/images/kira.webp"
+                alt="testimonial 3"
+              />
+              <div
+                class="testimonial-text ml-6 text-left pt-6 md:pt-16 relative"
+              >
+                <p class="text-sm md:text-base mb-2">
+                  
+                </p>
+                <h2
+                  class="text-right text-[#459bd5] font-bold text-2xl md:text-4xl"
+                >
+                  
+                </h2>
+                <h5 class="text-right text-[#459bd5] text-base md:text-lg">
+                  
+                </h5>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide px-4">
+            <div
+              class="flex flex-col md:flex-row max-w-[800px] items-center rounded-lg p-9 shadow-[0_0px_50px_rgba(59,130,246,0.6)] cursor-grab"
+            >
+              <img
+                class="shrink-0 w-[120px] h-[120px] md:w-[180px] md:h-[180px] rounded-full drop-shadow-[0_0px_80px_rgba(59,130,246,1)]"
+                src="/assets/images/Srihari.webp"
+                alt="testimonial 3"
+              />
+              <div
+                class="testimonial-text ml-6 text-left pt-6 md:pt-16 relative"
+              >
+                <p class="text-sm md:text-base mb-2">
+                  
+                </p>
+                <h2
+                  class="text-right text-[#459bd5] font-bold text-2xl md:text-4xl"
+                >
+                  
+                </h2>
+                <h5 class="text-right text-[#459bd5] text-base md:text-lg">
+                  
+                </h5>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </section>
+
+    <section class="max-w-screen-xl mx-auto px-4 pb-12">
+      <h2
+        class="text-3xl sm:text-[40px] bg-[#111] relative z-10 font-bold px-4 py-2 w-max mx-auto text-center text-[#1788ae] sm:border-2 border-[#1788ae] rounded-md"
+      >
+        Let's Connect
+      </h2>
+      <div class="flex flex-col md:flex-row items-center mt-10">
+        <div class="w-full">
+          <img src="./assets/images/contact-me.svg" alt="phone" />
+        </div>
+        <form class="w-full" name="contactUS" netlify action="https://formspree.io/f/xjkgjpap" method="POST">
+          <label for="name" class="block mb-2 text-sm font-medium glow-on-hover">Name</label>
+          <div class="relative mb-4">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+              <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
+              </svg>
+            </div>
+            <input type="text" id="name" name="name" class="bg-gray-50 border-2 outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#1788ae] focus:border-[#1788ae] block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="John Doe"/>
+          </div>
+        
+          <label for="email" class="block mb-2 text-sm font-medium glow-on-hover">Email</label>
+          <div class="relative mb-4">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+              <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+                <path d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z"/>
+                <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z"/>
+              </svg>
+            </div>
+            <input type="text" id="email" name="email" class="bg-gray-50 border-2 outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#1788ae] focus:border-[#1788ae] block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="JohnDoe@gmail.com"/>
+          </div>
+        
+          <label for="message" class="block mb-2 text-sm font-medium glow-on-hover">Message</label>
+          <div class="relative mb-4">
+            <textarea id="message" name="message" rows="8" placeholder="Message..." class="bg-gray-50 border-2 outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#1788ae] focus:border-[#1788ae] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"></textarea>
+          </div>
+        
+          <button type="submit" class="w-full text-white bg-[#1788ae] hover:bg-[#1280a4] focus:ring-4 focus:ring-[#4489a0] font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">
+            Send
+          </button>
+        </form>
+        
+      </div>
+    </section>
+    <footer class="flex flex-col items-center pb-10 relative">      
+      <p class="text-xs text-gray-300">Muhammed Anas © 2025</p>
+      
+      <ul class="mx-auto flex items-center justify-center gap-6 text-[#b0b2c3]">
+        <li>
+          <a href="https://www.linkedin.com/in/muhammed-anas-dadabhay-b492842bb/" target="_blank">
+            <svg
+              class="w-5 hover:text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"
+            >
+              <path
+                fill="currentColor"
+                d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 83.5 0 53.8a53.8 53.8 0 0 1 107.6 0c0 29.7-24.1 54.3-53.8 54.3zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z"
+              ></path>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.instagram.com/m.anas77_d/">
+            <svg
+              class="w-5 hover:text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"
+            >
+              <path
+                fill="currentColor"
+                d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"
+              ></path>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a href="mailto:muhammedanasdadabhay@gmail.com" target="_blank">
+            <svg
+              class="w-5 hover:text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+            >
+              <path
+                fill="currentColor"
+                d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"
+              ></path>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/ChromeDonutGaming">
+            <svg
+              class="w-7 hover:text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.207 11.387.6.113.82-.26.82-.577 0-.286-.01-1.04-.016-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.385-1.332-1.754-1.332-1.754-1.09-.745.082-.73.082-.73 1.204.086 1.84 1.238 1.84 1.238 1.07 1.835 2.807 1.304 3.492.997.108-.776.418-1.304.762-1.604-2.665-.303-5.467-1.334-5.467-5.933 0-1.31.467-2.38 1.236-3.22-.124-.303-.536-1.522.117-3.17 0 0 1.008-.322 3.3 1.23a11.495 11.495 0 0 1 3-.404c1.02.005 2.047.137 3 .404 2.29-1.552 3.296-1.23 3.296-1.23.655 1.648.243 2.867.12 3.17.77.84 1.233 1.91 1.233 3.22 0 4.61-2.807 5.627-5.48 5.923.43.37.814 1.1.814 2.22 0 1.604-.015 2.896-.015 3.286 0 .32.216.694.826.576C20.565 21.796 24 17.295 24 12 24 5.37 18.63 0 12 0z"
+              />
+            </svg>
+          </a>                       
+        </li>
+        <li>
+          <a href="https://www.youtube.com/@ChromeDonutGaming">
+            <svg
+              class="w-5 hover:text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 576 512"
+              fill="currentColor"
+            >
+              <path
+                d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z"
+              ></path>
+            </svg>
+          </a>
+        </li>
+      </ul>
+    </footer>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+      var swiper = new Swiper(".mySwiper", {
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+      });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.12.0/matter.min.js"></script>
+    <script src="https://cdn/jsdelivr.net/npm/matter-wrap@0.2.0/build/matter-wrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/matter-attractors@0.1.6/build/matter-attractors.min.js"></script>
+  </body>
+</html>
